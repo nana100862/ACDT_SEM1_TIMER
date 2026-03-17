@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACDT Week 3 · Action Learning II · Presentation Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #06080F;
+  --surface: #0C1220;
+  --border:  rgba(255,200,80,0.1);
+  --gold:    #F5C842;
+  --gold2:   #E8A020;
+  --teal:    #00C6C6;
+  --muted:   #3A5060;
+  --text:    #EEE8D5;
+  --pres:    #F5C842;
+  --feed:    #38D9A9;
+  --done:    #2A4030;
+  --warn:    #FF5E5E;
+  --next:    rgba(0,198,198,0.15);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px 40px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* background texture */
+body::before {
+  content:'';
+  position: fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(245,200,66,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+  pointer-events: none;
+}
+body::after {
+  content:'';
+  position: fixed; inset:0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(245,200,66,0.008) 3px, rgba(245,200,66,0.008) 4px
+  );
+  pointer-events: none;
+}
+
+.glow {
+  position: fixed;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,200,66,0.06) 0%, transparent 65%);
+  top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  animation: glowPulse 7s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { opacity:.7; transform:translate(-50%,-50%) scale(1); }
+  50%      { opacity:1;  transform:translate(-50%,-50%) scale(1.1); }
+}
+
+/* ── LAYOUT ── */
+.wrap {
+  position: relative; z-index:1;
+  width:100%; max-width:960px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 24px;
+}
+
+/* ── HEADER ── */
+.header { text-align:center; }
+.eyebrow {
+  font-size:10px; letter-spacing:6px; color:var(--gold);
+  text-transform:uppercase; margin-bottom:8px;
+}
+.title {
+  font-family:'Playfair Display',serif;
+  font-size: clamp(28px,5vw,52px);
+  font-weight:900; line-height:1.05;
+}
+.title span { color: var(--gold); }
+.sub { font-size:10px; letter-spacing:4px; color:var(--muted); margin-top:6px; text-transform:uppercase; }
+
+/* ── SETUP PANEL ── */
+#setupPanel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px 40px;
+  width:100%; max-width:480px;
+  display:flex; flex-direction:column; gap:20px;
+  animation: fadeUp .6s ease both;
+}
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.setup-title {
+  font-family:'Playfair Display',serif;
+  font-size:20px; color:var(--gold); text-align:center;
+}
+
+.field-row {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.field-label { font-size:11px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+
+.num-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(245,200,66,0.2);
+  border-radius:6px;
+  color: var(--text);
+  font-family:'Space Mono',monospace;
+  font-size:20px; font-weight:700;
+  width:80px; text-align:center;
+  padding:8px 4px;
+  outline:none;
+  transition: border-color .2s;
+}
+.num-input:focus { border-color: var(--gold); }
+
+.divider-line {
+  height:1px; background: rgba(245,200,66,0.1); width:100%;
+}
+
+.time-row {
+  display:flex; gap:16px; justify-content:center;
+}
+.time-chip {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+.time-chip-val {
+  background: rgba(255,255,255,0.05);
+  border:1px solid rgba(245,200,66,0.15);
+  border-radius:6px;
+  color:var(--text); font-family:'Space Mono',monospace;
+  font-size:18px; font-weight:700;
+  width:70px; text-align:center; padding:7px 4px;
+  outline:none; transition:border-color .2s;
+}
+.time-chip-val:focus { border-color:var(--gold); }
+.time-chip-label { font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+
+.btn-launch {
+  background: var(--gold);
+  border: none; border-radius:6px;
+  color: #06080F;
+  font-family:'Space Mono',monospace;
+  font-size:12px; letter-spacing:4px; font-weight:700;
+  padding:14px; cursor:pointer;
+  text-transform:uppercase;
+  transition: all .2s;
+}
+.btn-launch:hover { background:var(--gold2); transform:translateY(-1px); }
+
+/* ── MAIN SESSION ── */
+#sessionPanel { display:none; width:100%; flex-direction:column; align-items:center; gap:20px; }
+
+/* progress strip */
+.progress-strip {
+  display:flex; gap:4px; width:100%;
+  flex-wrap:wrap; justify-content:center;
+}
+.ps-dot {
+  width:28px; height:28px; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; letter-spacing:1px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.03);
+  color: var(--muted);
+  transition: all .4s;
+  cursor:default;
+}
+.ps-dot.ps-done { background:rgba(56,217,169,0.15); border-color:rgba(56,217,169,0.3); color:#38D9A9; }
+.ps-dot.ps-active { background:rgba(245,200,66,0.2); border-color:var(--gold); color:var(--gold); transform:scale(1.1); }
+
+/* current group hero */
+.hero {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  text-align:center;
+}
+.hero-mode {
+  font-size:11px; letter-spacing:5px; text-transform:uppercase;
+  padding:4px 16px; border-radius:20px;
+  transition: background .4s, color .4s;
+}
+.mode-pres  { background:rgba(245,200,66,0.15); color:var(--gold); }
+.mode-feed  { background:rgba(56,217,169,0.15); color:var(--feed); }
+
+.hero-group {
+  font-family:'Playfair Display',serif;
+  font-size: clamp(44px,10vw,90px);
+  font-weight:900; line-height:1;
+  color:var(--gold);
+  text-shadow: 0 0 60px rgba(245,200,66,0.35);
+  transition: color .4s, text-shadow .4s;
+}
+.hero-group.feed-color {
+  color:var(--feed);
+  text-shadow: 0 0 60px rgba(56,217,169,0.35);
+}
+
+.hero-label {
+  font-size:13px; letter-spacing:3px; color:var(--muted); text-transform:uppercase;
+}
+
+/* big timer */
+.big-timer {
+  font-family:'Space Mono',monospace;
+  font-size: clamp(72px,16vw,130px);
+  font-weight:700; letter-spacing:-4px; line-height:1;
+  color:var(--gold);
+  text-shadow: 0 0 50px rgba(245,200,66,0.5), 0 0 100px rgba(245,200,66,0.15);
+  transition: color .4s, text-shadow .4s;
+}
+.big-timer.feed-timer {
+  color:var(--feed);
+  text-shadow: 0 0 50px rgba(56,217,169,0.5), 0 0 100px rgba(56,217,169,0.15);
+}
+.big-timer.warn-timer {
+  color: var(--warn) !important;
+  text-shadow: 0 0 50px rgba(255,94,94,0.6) !important;
+  animation: wPulse .9s ease-in-out infinite;
+}
+@keyframes wPulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+/* bar */
+.bar-wrap { width:100%; }
+.bar-row { display:flex; justify-content:space-between; font-size:9px; letter-spacing:3px; color:var(--muted); margin-bottom:5px; text-transform:uppercase; }
+.bar-track {
+  height:16px; border-radius:8px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(245,200,66,0.1);
+  overflow:hidden;
+}
+.bar-fill {
+  height:100%; border-radius:8px;
+  transition: width .95s linear;
+  position:relative;
+}
+.bar-fill::after {
+  content:''; position:absolute; right:0; top:0; bottom:0;
+  width:40px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2));
+  border-radius:0 8px 8px 0;
+}
+.pres-fill { background:linear-gradient(90deg,#C49000,var(--gold)); box-shadow:0 0 16px rgba(245,200,66,0.4); }
+.feed-fill { background:linear-gradient(90deg,#1A8060,var(--feed)); box-shadow:0 0 16px rgba(56,217,169,0.4); }
+
+/* overall bar */
+.overall-track {
+  height:8px; border-radius:4px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(245,200,66,0.08);
+  overflow:hidden; margin-top:4px;
+}
+.overall-fill {
+  height:100%; border-radius:4px;
+  background: linear-gradient(90deg, var(--gold2), var(--gold));
+  transition: width .95s linear;
+  box-shadow: 0 0 8px rgba(245,200,66,0.3);
+}
+
+/* ── QUEUE ── */
+.queue-section { width:100%; }
+.queue-title { font-size:9px; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-bottom:10px; }
+.queue-list {
+  display:flex; flex-direction:column; gap:6px;
+}
+.queue-item {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 16px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.02);
+  transition: all .4s;
+}
+.queue-item.qi-up-next {
+  border-color:rgba(0,198,198,0.3);
+  background:rgba(0,198,198,0.07);
+}
+.queue-item.qi-done {
+  opacity:.35;
+}
+.qi-rank {
+  font-size:10px; letter-spacing:1px; color:var(--muted);
+  width:24px; text-align:center; flex-shrink:0;
+}
+.qi-group {
+  font-family:'Playfair Display',serif;
+  font-size:18px; font-weight:700;
+  color:var(--text); flex-shrink:0; min-width:90px;
+}
+.qi-badge {
+  font-size:9px; letter-spacing:2px; text-transform:uppercase;
+  padding:3px 10px; border-radius:20px; flex-shrink:0;
+}
+.badge-pres { background:rgba(245,200,66,0.15); color:var(--gold); }
+.badge-feed { background:rgba(56,217,169,0.15); color:var(--feed); }
+.badge-done { background:rgba(56,217,169,0.08); color:#38D9A9; }
+.badge-wait { background:rgba(255,255,255,0.05); color:var(--muted); }
+.badge-next { background:rgba(0,198,198,0.15); color:var(--teal); }
+
+.qi-time { font-size:10px; color:var(--muted); margin-left:auto; }
+
+/* ── CONTROLS ── */
+.ctrl-row {
+  display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+}
+.btn {
+  padding:11px 24px; border-radius:4px;
+  font-family:'Space Mono',monospace;
+  font-size:10px; letter-spacing:3px; font-weight:700;
+  cursor:pointer; border:1px solid; text-transform:uppercase;
+  transition:all .2s;
+}
+.btn:hover { filter:brightness(1.2); transform:translateY(-1px); }
+.btn:active { transform:translateY(0); }
+.btn-skip   { background:transparent; border-color:var(--gold); color:var(--gold); }
+.btn-pause  { background:#E8A020; border-color:#E8A020; color:#06080F; }
+.btn-resume { background:var(--gold); border-color:var(--gold); color:#06080F; }
+.btn-back   { background:transparent; border-color:rgba(255,255,255,0.15); color:var(--muted); }
+.btn-end    { background:transparent; border-color:rgba(255,94,94,0.3); color:#FF5E5E; }
+
+/* ── DONE SCREEN ── */
+#donePanel {
+  display:none; flex-direction:column; align-items:center;
+  gap:16px; text-align:center;
+  animation: fadeUp .6s ease both;
+}
+.done-big {
+  font-family:'Playfair Display',serif;
+  font-size: clamp(36px,8vw,72px);
+  font-weight:900; color:var(--feed);
+  text-shadow:0 0 60px rgba(56,217,169,0.4);
+}
+.done-sub { font-size:12px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; }
+
+/* utils */
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="eyebrow">ACDT · Week 3 · Action Learning II</div>
+    <div class="title">8-Hour Problem<br><span>Presentations</span></div>
+    <div class="sub">Group Timer · Live Queue · Auto-Advance</div>
+  </div>
+
+  <!-- ── SETUP PANEL ── -->
+  <div id="setupPanel">
+    <div class="setup-title">Configure Session</div>
+
+    <div class="field-row">
+      <span class="field-label">First Group #</span>
+      <input class="num-input" id="groupFrom" type="number" value="1" min="1" max="99">
+    </div>
+    <div class="field-row">
+      <span class="field-label">Last Group #</span>
+      <input class="num-input" id="groupTo" type="number" value="8" min="1" max="99">
+    </div>
+
+    <div class="divider-line"></div>
+
+    <div style="text-align:center">
+      <div class="field-label" style="margin-bottom:12px">Time per Group</div>
+      <div class="time-row">
+        <div class="time-chip">
+          <input class="time-chip-val" id="presMin" type="number" value="3" min="1" max="30">
+          <div class="time-chip-label">Presentation (min)</div>
+        </div>
+        <div class="time-chip">
+          <input class="time-chip-val" id="feedMin" type="number" value="2" min="1" max="15">
+          <div class="time-chip-label">Feedback (min)</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-launch" onclick="launch()">🔀 Shuffle &amp; Begin</button>
+  </div>
+
+  <!-- ── SESSION PANEL ── -->
+  <div id="sessionPanel">
+
+    <!-- dot progress strip -->
+    <div class="progress-strip" id="progressStrip"></div>
+
+    <!-- hero -->
+    <div class="hero">
+      <div class="hero-mode mode-pres" id="heroMode">Presentation</div>
+      <div class="hero-group" id="heroGroup">Group 1</div>
+      <div class="hero-label" id="heroLabel">Presenting now</div>
+    </div>
+
+    <!-- big timer -->
+    <div class="big-timer" id="bigTimer">03:00</div>
+
+    <!-- phase bar -->
+    <div class="bar-wrap">
+      <div class="bar-row">
+        <span id="barLabel">Presentation</span>
+        <span id="barPct">0%</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill pres-fill" id="barFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- overall progress -->
+    <div class="bar-wrap">
+      <div class="bar-row">
+        <span>Overall Session Progress</span>
+        <span id="overallPct">0%</span>
+      </div>
+      <div class="overall-track">
+        <div class="overall-fill" id="overallFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- controls -->
+    <div class="ctrl-row">
+      <button class="btn btn-pause"  id="btnPause"  onclick="togglePause()">⏸ Pause</button>
+      <button class="btn btn-resume hidden" id="btnResume" onclick="togglePause()">▶ Resume</button>
+      <button class="btn btn-skip"   id="btnSkip"   onclick="skipPhase()">Skip Phase ▶</button>
+      <button class="btn btn-end"                   onclick="endSession()">✕ End</button>
+    </div>
+
+    <!-- queue -->
+    <div class="queue-section">
+      <div class="queue-title">Presentation Queue</div>
+      <div class="queue-list" id="queueList"></div>
+    </div>
+
+  </div>
+
+  <!-- ── DONE PANEL ── -->
+  <div id="donePanel">
+    <div style="font-size:48px">🎉</div>
+    <div class="done-big">Session Complete</div>
+    <div class="done-sub">All groups presented — great work!</div>
+    <button class="btn btn-back" onclick="backToSetup()" style="margin-top:8px">↺ New Session</button>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──
+let groups    = [];   // shuffled group numbers
+let gIdx      = 0;   // current group index
+let phase     = 'pres'; // 'pres' | 'feed'
+let elapsed   = 0;
+let totalEl   = 0;
+let paused    = false;
+let ticker    = null;
+
+let PRES_DUR, FEED_DUR, TOTAL_DUR;
+
+// ── SHUFFLE ──
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function launch() {
+  const from  = parseInt(document.getElementById('groupFrom').value) || 1;
+  const to    = parseInt(document.getElementById('groupTo').value)   || 8;
+  const pMin  = parseInt(document.getElementById('presMin').value)   || 3;
+  const fMin  = parseInt(document.getElementById('feedMin').value)   || 2;
+
+  if (to < from) { alert('Last group must be ≥ First group.'); return; }
+
+  PRES_DUR  = pMin * 60;
+  FEED_DUR  = fMin * 60;
+  TOTAL_DUR = (to - from + 1) * (PRES_DUR + FEED_DUR);
+
+  groups = [];
+  for (let i = from; i <= to; i++) groups.push(i);
+  shuffle(groups);
+
+  gIdx = 0; phase = 'pres'; elapsed = 0; totalEl = 0; paused = false;
+
+  buildDots();
+  buildQueue();
+  updateUI();
+
+  document.getElementById('setupPanel').style.display  = 'none';
+  document.getElementById('sessionPanel').style.display = 'flex';
+  document.getElementById('donePanel').style.display   = 'none';
+
+  startTicker();
+}
+
+// ── BUILD DOM ──
+function buildDots() {
+  const strip = document.getElementById('progressStrip');
+  strip.innerHTML = '';
+  groups.forEach((g, i) => {
+    const d = document.createElement('div');
+    d.className = 'ps-dot';
+    d.id = `dot${i}`;
+    d.textContent = g;
+    strip.appendChild(d);
+  });
+}
+
+function buildQueue() {
+  const list = document.getElementById('queueList');
+  list.innerHTML = '';
+  groups.forEach((g, i) => {
+    const item = document.createElement('div');
+    item.className = 'queue-item';
+    item.id = `qi${i}`;
+
+    const rank  = document.createElement('div'); rank.className  = 'qi-rank'; rank.textContent = i + 1;
+    const grp   = document.createElement('div'); grp.className   = 'qi-group'; grp.textContent = `Group ${g}`;
+    const badge = document.createElement('div'); badge.className = 'qi-badge badge-wait'; badge.id = `badge${i}`; badge.textContent = 'Waiting';
+    const time  = document.createElement('div'); time.className  = 'qi-time'; time.id = `qtime${i}`;
+
+    const presDur = document.getElementById('presMin').value || 3;
+    const feedDur = document.getElementById('feedMin').value || 2;
+    time.textContent = `${presDur}m + ${feedDur}m`;
+
+    item.appendChild(rank);
+    item.appendChild(grp);
+    item.appendChild(badge);
+    item.appendChild(time);
+    list.appendChild(item);
+  });
+}
+
+// ── TICK ──
+function startTicker() {
+  clearInterval(ticker);
+  ticker = setInterval(tick, 1000);
+}
+
+function tick() {
+  if (paused) return;
+  elapsed++;
+  totalEl++;
+
+  const dur = phase === 'pres' ? PRES_DUR : FEED_DUR;
+  if (elapsed >= dur) {
+    elapsed = 0;
+    if (phase === 'pres') {
+      phase = 'feed';
+    } else {
+      // next group
+      gIdx++;
+      if (gIdx >= groups.length) {
+        finishSession(); return;
+      }
+      phase = 'pres';
+    }
+  }
+  updateUI();
+}
+
+// ── UPDATE UI ──
+function fmt(s) {
+  return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+
+function updateUI() {
+  if (gIdx >= groups.length) return;
+
+  const g    = groups[gIdx];
+  const dur  = phase === 'pres' ? PRES_DUR : FEED_DUR;
+  const rem  = dur - elapsed;
+  const pct  = (elapsed / dur * 100).toFixed(1);
+  const warn = rem <= 30;
+  const isPres = phase === 'pres';
+
+  // hero
+  document.getElementById('heroMode').textContent  = isPres ? 'Presentation' : 'Peer Feedback';
+  document.getElementById('heroMode').className    = `hero-mode ${isPres ? 'mode-pres' : 'mode-feed'}`;
+  document.getElementById('heroGroup').textContent = `Group ${g}`;
+  document.getElementById('heroGroup').className   = `hero-group ${isPres ? '' : 'feed-color'}`;
+  document.getElementById('heroLabel').textContent = isPres ? 'Presenting now' : 'Feedback time';
+
+  // timer
+  const bt = document.getElementById('bigTimer');
+  bt.textContent = fmt(rem);
+  bt.className   = `big-timer${isPres ? '' : ' feed-timer'}${warn ? ' warn-timer' : ''}`;
+
+  // bar
+  document.getElementById('barLabel').textContent = isPres ? 'Presentation' : 'Feedback';
+  document.getElementById('barPct').textContent   = Math.round(pct) + '%';
+  const fill = document.getElementById('barFill');
+  fill.style.width    = pct + '%';
+  fill.className      = `bar-fill ${isPres ? 'pres-fill' : 'feed-fill'}`;
+
+  // overall
+  const oPct = (totalEl / TOTAL_DUR * 100).toFixed(1);
+  document.getElementById('overallFill').style.width = oPct + '%';
+  document.getElementById('overallPct').textContent  = Math.round(oPct) + '%';
+
+  // dots
+  groups.forEach((_, i) => {
+    const dot = document.getElementById(`dot${i}`);
+    dot.className = 'ps-dot' +
+      (i < gIdx ? ' ps-done' : i === gIdx ? ' ps-active' : '');
+  });
+
+  // queue
+  groups.forEach((_, i) => {
+    const item  = document.getElementById(`qi${i}`);
+    const badge = document.getElementById(`badge${i}`);
+    const qtime = document.getElementById(`qtime${i}`);
+
+    if (i < gIdx) {
+      item.className  = 'queue-item qi-done';
+      badge.className = 'qi-badge badge-done'; badge.textContent = '✓ Done';
+      qtime.textContent = '';
+    } else if (i === gIdx) {
+      item.className  = 'queue-item';
+      badge.className = `qi-badge ${isPres ? 'badge-pres' : 'badge-feed'}`;
+      badge.textContent = isPres ? '▶ Presenting' : '💬 Feedback';
+      qtime.textContent = fmt(rem) + ' left';
+    } else if (i === gIdx + 1) {
+      item.className  = 'queue-item qi-up-next';
+      badge.className = 'qi-badge badge-next'; badge.textContent = 'Up Next';
+      const waitSec = rem + (isPres ? FEED_DUR : 0);
+      qtime.textContent = `~${fmt(waitSec)}`;
+    } else {
+      item.className  = 'queue-item';
+      badge.className = 'qi-badge badge-wait'; badge.textContent = 'Waiting';
+      const stepsAhead = (i - gIdx);
+      const waitSec    = rem
+        + (isPres ? FEED_DUR : 0)
+        + (stepsAhead - 1) * (PRES_DUR + FEED_DUR);
+      qtime.textContent = `~${fmt(waitSec)}`;
+    }
+  });
+}
+
+// ── CONTROLS ──
+function togglePause() {
+  paused = !paused;
+  document.getElementById('btnPause') .classList.toggle('hidden', paused);
+  document.getElementById('btnResume').classList.toggle('hidden', !paused);
+}
+
+function skipPhase() {
+  elapsed = 0;
+  if (phase === 'pres') {
+    phase = 'feed';
+  } else {
+    gIdx++;
+    phase = 'pres';
+    if (gIdx >= groups.length) { finishSession(); return; }
+  }
+  updateUI();
+}
+
+function endSession() {
+  if (!confirm('End session early?')) return;
+  finishSession();
+}
+
+function finishSession() {
+  clearInterval(ticker);
+  document.getElementById('sessionPanel').style.display = 'none';
+  document.getElementById('donePanel').style.display    = 'flex';
+}
+
+function backToSetup() {
+  clearInterval(ticker);
+  document.getElementById('donePanel').style.display   = 'none';
+  document.getElementById('setupPanel').style.display  = '';
+}
+</script>
+</body>
+</html>
