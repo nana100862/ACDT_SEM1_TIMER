@@ -1,7 +1,7 @@
-# Week 3 — Class Timers
+# Class Timers
 
 ---
-## Timers
+## Week 3_Timers
 
 ### Action Learning 1 — Driver Assignment Optimization
 Step-by-step countdown timer for the AL1 group activity.
