@@ -20,7 +20,7 @@ Group presentation timer with random shuffle and live queue.
 
 **→ [Open AL2 Timer](./acdt_al2_timer.html)**
 
-## Week 4_Timers
+## Week 4_Timer
 Action Learning — Pattern Identification & Pseudocode Workshop
 - Step-by-step countdown timer for the AL Pattern ID & Pseudocode group activity.
 - 6 phases with preset durations (75 min total)
