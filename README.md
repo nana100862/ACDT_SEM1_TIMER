@@ -26,7 +26,18 @@ Action Learning — Pattern Identification & Pseudocode Workshop
 - 6 phases with preset durations (75 min total)
 - Live progress bar and session timeline
 - Pause, resume, skip phase controls
+  
 **→ [Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/acdt_week4_al_pattern_timer.html)**
+
+## Week 5_Timer
+Action Learning — Pseudocode → Python Workshop
+- Step-by-step countdown timer for the AL Pseudocode → Python group activity.
+- 4 parts · 7 steps with preset durations (90 min total)
+- Live progress bar and session timeline
+- Activity mode labels (Individual / Pair / Instructor / Group) with step hints
+- Pause, resume, skip phase controls
+  
+**→ [Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/week5_al_timer.html)**
 
 ##  How to Use
 Just open the links above — no installation needed.
