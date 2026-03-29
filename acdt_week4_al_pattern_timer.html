@@ -3,31 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACDT Week 3 · Action Learning Timer</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<title>ACDT Week 5 · Action Learning Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:       #050E1A;
-    --surface:  #0A1828;
-    --border:   rgba(0,210,255,0.12);
+    --bg:      #050E1A;
+    --surface: #0A1828;
+    --border:  rgba(0,210,255,0.12);
     --c1: #00C6FF;
-    --c2: #0096D6;
-    --c3: #006FA6;
-    --c4: #004E82;
-    --c5: #002F5F;
+    --c2: #00E5A0;
+    --c3: #E8FF00;
+    --c4: #FB923C;
+    --c5: #FF6B35;
     --c6: #38D9F5;
-    --warn: #FF5E5E;
-    --text: #D6F0FF;
+    --warn:  #FF5E5E;
+    --text:  #D6F0FF;
     --muted: #3A6F88;
     --accent: #00E5FF;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin:0; padding:0; box-sizing:border-box; }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Roboto', sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -40,289 +40,206 @@
 
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image:
-      linear-gradient(rgba(0,210,255,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,210,255,0.04) 1px, transparent 1px);
+      linear-gradient(rgba(0,210,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,210,255,0.035) 1px, transparent 1px);
     background-size: 56px 56px;
     pointer-events: none;
   }
-
   body::after {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: repeating-linear-gradient(
       0deg, transparent, transparent 3px,
-      rgba(0,180,216,0.012) 3px, rgba(0,180,216,0.012) 4px
+      rgba(0,180,216,0.010) 3px, rgba(0,180,216,0.010) 4px
     );
     pointer-events: none;
   }
 
   .glow-blob {
     position: fixed;
-    width: 600px; height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,150,214,0.08) 0%, transparent 70%);
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,150,214,0.07) 0%, transparent 70%);
     top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%,-50%);
     pointer-events: none;
     animation: blobPulse 6s ease-in-out infinite;
   }
   @keyframes blobPulse {
-    0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
-    50%      { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+    0%,100% { transform:translate(-50%,-50%) scale(1);    opacity:.8; }
+    50%      { transform:translate(-50%,-50%) scale(1.15); opacity:1; }
   }
 
   .container {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 820px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
+    position: relative; z-index: 1;
+    width: 100%; max-width: 820px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 28px;
   }
 
-  .header {
-    text-align: center;
-    animation: fadeDown 0.8s ease both;
-  }
+  /* HEADER */
+  .header { text-align:center; animation: fadeDown 0.8s ease both; }
   @keyframes fadeDown {
-    from { opacity:0; transform: translateY(-20px); }
-    to   { opacity:1; transform: translateY(0); }
+    from { opacity:0; transform:translateY(-20px); }
+    to   { opacity:1; transform:translateY(0); }
   }
 
   .eyebrow {
-    font-size: 10px;
-    letter-spacing: 6px;
-    color: var(--c1);
-    text-transform: uppercase;
-    margin-bottom: 10px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 10px; letter-spacing: 5px;
+    color: var(--c1); text-transform: uppercase; margin-bottom: 12px;
   }
 
   .title-main {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 5.5vw, 52px);
-    font-weight: 900;
-    line-height: 1.05;
-    color: var(--text);
+    font-family: 'Roboto', sans-serif;
+    font-size: clamp(22px, 4vw, 40px);
+    font-weight: 700; line-height: 1.1;
+    color: var(--text); letter-spacing: -0.01em;
   }
   .title-accent { color: var(--accent); }
 
   .subtitle {
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: var(--muted);
-    margin-top: 8px;
-    text-transform: uppercase;
+    font-family: 'Roboto', sans-serif;
+    font-size: 11px; letter-spacing: 3px;
+    color: var(--muted); margin-top: 10px;
+    text-transform: uppercase; font-weight: 300;
   }
 
+  /* TIMER */
   .timer-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display:flex; flex-direction:column; align-items:center;
+    gap: 0;
     animation: fadeDown 0.8s 0.15s ease both;
   }
 
   .timer-digits {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Roboto Mono', monospace;
     font-size: clamp(80px, 18vw, 140px);
-    font-weight: 700;
-    letter-spacing: -4px;
-    line-height: 1;
+    font-weight: 500; letter-spacing: -2px;
+    line-height: 1; display: block;
     color: var(--accent);
-    text-shadow: 0 0 40px rgba(0,229,255,0.45), 0 0 100px rgba(0,229,255,0.15);
+    text-shadow: 0 0 40px rgba(0,229,255,0.4), 0 0 100px rgba(0,229,255,0.12);
     transition: color 0.4s, text-shadow 0.4s;
   }
   .timer-digits.warn {
     color: var(--warn);
-    text-shadow: 0 0 40px rgba(255,94,94,0.6), 0 0 100px rgba(255,94,94,0.2);
+    text-shadow: 0 0 40px rgba(255,94,94,0.55), 0 0 100px rgba(255,94,94,0.18);
     animation: warnPulse 1s ease-in-out infinite;
   }
-  @keyframes warnPulse {
-    0%,100% { opacity:1; }
-    50%      { opacity:0.55; }
-  }
+  @keyframes warnPulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
 
   .phase-label {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(18px, 3vw, 26px);
-    font-weight: 700;
-    color: var(--c1);
-    margin-top: 6px;
-    letter-spacing: 0.5px;
-    transition: color 0.5s;
-    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: clamp(16px, 2.8vw, 24px); font-weight: 700;
+    color: var(--c1); margin-top: 16px;
+    transition: color 0.5s; text-align: center;
   }
   .phase-sub {
-    font-size: 20px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    margin-top: 6px;
-    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px; font-weight: 300;
+    color: var(--muted); letter-spacing: 0.3px;
+    margin-top: 8px; text-align: center; max-width: 580px;
   }
 
-  .bar-section {
-    width: 100%;
-    animation: fadeUp 0.8s 0.25s ease both;
-  }
+  /* BARS */
+  .bar-section { width:100%; animation: fadeUp 0.8s 0.25s ease both; }
   @keyframes fadeUp {
-    from { opacity:0; transform: translateY(16px); }
-    to   { opacity:1; transform: translateY(0); }
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
   }
 
   .bar-label-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    margin-bottom: 6px;
-    text-transform: uppercase;
+    display:flex; justify-content:space-between;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 9px; letter-spacing: 3px;
+    color: var(--muted); margin-bottom: 6px; text-transform: uppercase;
   }
 
   .bar-track {
-    height: 14px;
-    border-radius: 7px;
+    height: 12px; border-radius: 6px;
     background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
-    overflow: hidden;
-    position: relative;
+    border: 1px solid var(--border); overflow: hidden;
   }
-
   .bar-fill {
-    height: 100%;
-    border-radius: 7px;
+    height: 100%; border-radius: 6px;
     background: linear-gradient(90deg, var(--c2), var(--accent));
     transition: width 0.95s linear;
-    box-shadow: 0 0 16px rgba(0,229,255,0.4);
+    box-shadow: 0 0 14px rgba(0,229,255,0.35);
     position: relative;
   }
   .bar-fill::after {
-    content: '';
-    position: absolute;
-    right: 0; top: 0; bottom: 0;
-    width: 40px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25));
-    border-radius: 0 7px 7px 0;
+    content:''; position:absolute; right:0; top:0; bottom:0; width:40px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22));
+    border-radius: 0 6px 6px 0;
   }
 
   .timeline-track {
-    height: 40px;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.03);
+    height: 38px; border-radius: 8px;
+    background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    display: flex;
-    overflow: hidden;
-    position: relative;
+    display:flex; overflow:hidden; position:relative;
   }
-
   .seg {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    letter-spacing: 1px;
-    border-right: 1px solid rgba(0,210,255,0.08);
-    transition: background 0.6s;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    height:100%; display:flex; align-items:center; justify-content:center;
+    font-family: 'Roboto Mono', monospace; font-size:9px; letter-spacing:1px;
+    border-right: 1px solid rgba(0,210,255,0.07);
+    transition: background 0.6s; cursor:pointer; overflow:hidden;
   }
-  .seg:last-child { border-right: none; }
-  .seg:hover { filter: brightness(1.3); }
-
-  .seg-text {
-    color: rgba(214,240,255,0.5);
-    white-space: nowrap;
-    overflow: hidden;
-    pointer-events: none;
-  }
+  .seg:last-child { border-right:none; }
+  .seg:hover { filter:brightness(1.3); }
+  .seg-text { color:rgba(214,240,255,0.4); white-space:nowrap; overflow:hidden; pointer-events:none; }
 
   .playhead {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 3px;
+    position:absolute; top:0; bottom:0; width:2px;
     background: var(--accent);
-    box-shadow: 0 0 10px var(--accent), 0 0 20px rgba(0,229,255,0.4);
-    transition: left 0.95s linear;
-    z-index: 2;
-    pointer-events: none;
+    box-shadow: 0 0 10px var(--accent), 0 0 20px rgba(0,229,255,0.35);
+    transition: left 0.95s linear; z-index:2; pointer-events:none;
   }
 
-  .seg-labels {
-    display: flex;
-    margin-top: 5px;
-  }
+  .seg-labels { display:flex; margin-top:5px; }
   .seg-lbl {
-    font-size: 8px;
-    color: var(--muted);
-    text-align: center;
-    letter-spacing: 0.5px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    padding-inline: 3px;
-    transition: color 0.4s;
+    font-family: 'Roboto', sans-serif; font-size:8px; font-weight:400;
+    color: var(--muted); text-align:center; letter-spacing:0.3px;
+    overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+    padding-inline:3px; transition:color 0.4s;
   }
-  .seg-lbl.active-lbl { color: var(--accent); }
+  .seg-lbl.active-lbl { color:var(--accent); }
 
+  /* PILLS */
   .phase-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
     animation: fadeUp 0.8s 0.35s ease both;
   }
-
   .pill {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid rgba(0,210,255,0.2);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: all 0.25s;
+    font-family: 'Roboto', sans-serif; font-size:10px; font-weight:500;
+    padding:6px 14px; border-radius:20px;
+    border:1px solid rgba(0,210,255,0.2);
+    background:transparent; color:var(--muted);
+    cursor:pointer; letter-spacing:0.5px; transition:all 0.25s;
   }
-  .pill:hover { filter: brightness(1.4); }
-  .pill.active-pill { background: rgba(0,210,255,0.08); }
-  .pill.done-pill   { opacity: 0.4; text-decoration: line-through; }
+  .pill:hover { filter:brightness(1.4); }
+  .pill.active-pill { background:rgba(0,210,255,0.07); }
+  .pill.done-pill   { opacity:.4; text-decoration:line-through; }
 
+  /* CONTROLS */
   .controls {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
+    display:flex; gap:12px; flex-wrap:wrap; justify-content:center;
     animation: fadeUp 0.8s 0.45s ease both;
   }
-
   .btn {
-    padding: 12px 28px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-family: 'Space Mono', monospace;
-    letter-spacing: 3px;
-    font-weight: 700;
-    cursor: pointer;
-    border: 1px solid;
-    transition: all 0.2s;
-    text-transform: uppercase;
+    padding:11px 26px; border-radius:6px;
+    font-family:'Roboto',sans-serif; font-size:12px; font-weight:500;
+    letter-spacing:1.5px; cursor:pointer; border:1px solid;
+    transition:all 0.2s; text-transform:uppercase;
   }
-  .btn:hover { filter: brightness(1.2); transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
-
-  .btn-start  { background: var(--c1);    border-color: var(--c1);    color: var(--bg); }
-  .btn-pause  { background: #F4A261;      border-color: #F4A261;      color: var(--bg); }
-  .btn-resume { background: var(--c1);    border-color: var(--c1);    color: var(--bg); }
-  .btn-next   { background: transparent;  border-color: var(--c6);    color: var(--c6); }
-  .btn-reset  { background: transparent;  border-color: #FF6B6B44;    color: #FF6B6B; }
+  .btn:hover  { filter:brightness(1.2); transform:translateY(-1px); }
+  .btn:active { transform:translateY(0); }
+  .btn-start  { background:var(--c1);  border-color:var(--c1);  color:var(--bg); }
+  .btn-pause  { background:#F4A261;    border-color:#F4A261;    color:var(--bg); }
+  .btn-resume { background:var(--c1);  border-color:var(--c1);  color:var(--bg); }
+  .btn-next   { background:transparent; border-color:var(--c6); color:var(--c6); }
+  .btn-reset  { background:transparent; border-color:#FF6B6B44; color:#FF6B6B; }
 </style>
 </head>
 <body>
@@ -330,21 +247,18 @@
 
 <div class="container">
 
-  <!-- HEADER -->
   <div class="header">
-    <div class="eyebrow">ACDT · Week 4 · Action Learning</div>
-    <div class="title-main">Pattern Identification &<br><span class="title-accent">Pseudocode</span> Workshop</div>
-    <div class="subtitle">Pattern Identification · Pseudocode Writing Exercise · Apply to Your 8-Hour Problem</div>
+    <div class="eyebrow">ACDT · Week 5 · Action Learning</div>
+    <div class="title-main">Pseudocode <span class="title-accent">→ Python</span> Workshop</div>
+    <div class="subtitle">Setup · Review · Translation · Showcase &amp; Debrief</div>
   </div>
 
-  <!-- BIG TIMER -->
   <div class="timer-wrap">
-    <div class="timer-digits" id="timerDigits">05:00</div>
-    <div class="phase-label" id="phaseLabel">Activity 1.1 · Individual Work</div>
-    <div class="phase-sub" id="phaseSub">Warm-Up Pattern Hunt — Identify patterns in A, B, C, D</div>
+    <div class="timer-digits" id="timerDigits">10:00</div>
+    <div class="phase-label"  id="phaseLabel">Part 1-1 · Individual</div>
+    <div class="phase-sub"    id="phaseSub">Open Colab · Verify Python · Select 2–3 simple functions from Week 4 (no loops — sequential logic only)</div>
   </div>
 
-  <!-- PHASE BAR -->
   <div class="bar-section">
     <div class="bar-label-row">
       <span>Phase Progress</span>
@@ -355,11 +269,10 @@
     </div>
   </div>
 
-  <!-- SESSION TIMELINE -->
   <div class="bar-section">
     <div class="bar-label-row">
-      <span id="sessionLabel" style="color:#FFD700; font-weight:700;">Session Timeline</span>
-      <span id="totalLeft" style="color:#FFD700; font-weight:700;"></span>
+      <span id="sessionLabel" style="color:#FFD700;font-weight:500;">Session Timeline</span>
+      <span id="totalLeft"    style="color:#FFD700;font-weight:500;"></span>
     </div>
     <div class="timeline-track" id="timelineTrack">
       <div class="playhead" id="playhead" style="left:0%"></div>
@@ -367,10 +280,8 @@
     <div class="seg-labels" id="segLabels"></div>
   </div>
 
-  <!-- PHASE PILLS -->
   <div class="phase-pills" id="phasePills"></div>
 
-  <!-- CONTROLS -->
   <div class="controls">
     <button class="btn btn-start"  id="btnStart"  onclick="startTimer()">▶ Start</button>
     <button class="btn btn-pause"  id="btnPause"  onclick="pauseTimer()"  style="display:none">⏸ Pause</button>
@@ -384,96 +295,85 @@
 <script>
 const PHASES = [
   {
-    label: "Activity 1.1 · Individual Work",
-    sub:   "Warm-Up Pattern Hunt — Identify patterns in A, B, C, D",
-    dur:   5 * 60,
-    color: "#00C6FF"
+    label: 'Part 1-1 · Individual',
+    sub:   'Open Colab · Verify Python · Select 2–3 simple functions from Week 4 (no loops — sequential logic only)',
+    dur:   10 * 60, color: '#00C6FF'
   },
   {
-    label: "Activity 1.1 · Pair Sharing",
-    sub:   "Compare identified patterns with your neighbor",
-    dur:   5 * 60,
-    color: "#0096D6"
+    label: 'Part 1-2 · Pair',
+    sub:   'Turn to your neighbor · Share selected functions · Confirm clear INPUT / OUTPUT · "Is this input clear?" · "What will be the return value?"',
+    dur:   10 * 60, color: '#00E5A0'
   },
   {
-    label: "Activity 1.2 · Group Discussion",
-    sub:   "Pattern Matching Challenge — Analyze 5 problems & identify patterns",
-    dur:   15 * 60,
-    color: "#006FA6"
+    label: 'Part 2 · Instructor Demo',
+    sub:   'Guided demo: CalculateDosage · Watch pseudocode → Python translation step-by-step',
+    dur:   10 * 60, color: '#60A5FA'
   },
   {
-    label: "Activity 2.1 · Guided Pseudocode",
-    sub:   "",
-    dur:   20 * 60,
-    color: "#004E82"
+    label: 'Part 2 · Individual Translation',
+    sub:   'Paste pseudocode as comments · Convert line-by-line · Add docstring · Test with sample inputs · Debug collaboratively',
+    dur:   25 * 60, color: '#E8FF00'
   },
   {
-    label: "Activity 2.1 · Your 8HR Pseudocode",
-    sub:   "Split into sub-tasks — Draft pseudocode for your own problem",
-    dur:   20 * 60,
-    color: "#002F5F"
+    label: 'Part 2 · Peer Code Review',
+    sub:   'Swap code with partner · Check: names, docstring, comments, indentation, correct output · Give constructive feedback',
+    dur:   15 * 60, color: '#A78BFA'
   },
   {
-    label: "Part 3 · Peer Review & Wrap-Up",
-    sub:   "Feedback, Q&A, and next steps",
-    dur:   10 * 60,
-    color: "#38D9F5"
+    label: 'Part 3 · Volunteer Showcase',
+    sub:   '2–3 students present · Show pseudocode → Python · Discuss one challenge & solution · Peer feedback',
+    dur:   10 * 60, color: '#FB923C'
+  },
+  {
+    label: 'Part 3 · Instructor Debrief',
+    sub:   'Best practices highlight · Common pitfalls review · Key takeaway: logic translation > syntax perfection',
+    dur:   10 * 60, color: '#FF6B35'
   },
 ];
 const TOTAL = PHASES.reduce((s, p) => s + p.dur, 0);
 
-let phaseIdx = 0;
-let elapsed  = 0;
-let totalEl  = 0;
-let running  = false;
-let interval = null;
+let phaseIdx = 0, elapsed = 0, totalEl = 0;
+let running = false, interval = null;
 
-// ── BUILD TIMELINE ──
+// Build timeline
 const track     = document.getElementById('timelineTrack');
 const segLabels = document.getElementById('segLabels');
 PHASES.forEach((p, i) => {
   const pct = (p.dur / TOTAL * 100).toFixed(3);
 
   const seg = document.createElement('div');
-  seg.className = 'seg';
-  seg.id = `seg${i}`;
+  seg.className = 'seg'; seg.id = `seg${i}`;
   seg.style.width = pct + '%';
-  seg.title = `${p.label} · ${Math.round(p.dur / 60)} min`;
-  seg.innerHTML = `<span class="seg-text">${Math.round(p.dur / 60)}m</span>`;
+  seg.title = `${p.label} · ${Math.round(p.dur/60)} min`;
+  seg.innerHTML = `<span class="seg-text">${Math.round(p.dur/60)}m</span>`;
   seg.addEventListener('click', () => jumpToPhase(i));
   track.insertBefore(seg, document.getElementById('playhead'));
 
   const lbl = document.createElement('div');
-  lbl.className = 'seg-lbl';
-  lbl.id = `lbl${i}`;
+  lbl.className = 'seg-lbl'; lbl.id = `lbl${i}`;
   lbl.style.width = pct + '%';
   lbl.textContent = i + 1;
   segLabels.appendChild(lbl);
 });
 
-// ── BUILD PILLS ──
+// Build pills
 const pillsWrap = document.getElementById('phasePills');
 PHASES.forEach((p, i) => {
   const pill = document.createElement('button');
-  pill.className = 'pill';
-  pill.id = `pill${i}`;
-  pill.textContent = `${i + 1} · ${Math.round(p.dur / 60)}m`;
+  pill.className = 'pill'; pill.id = `pill${i}`;
+  pill.textContent = `${i+1} · ${Math.round(p.dur/60)}m`;
   pill.addEventListener('click', () => jumpToPhase(i));
   pillsWrap.appendChild(pill);
 });
 
 function fmt(s) {
-  const m  = Math.floor(s / 60).toString().padStart(2, '0');
-  const sc = (s % 60).toString().padStart(2, '0');
-  return `${m}:${sc}`;
+  return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
 }
 
 function updateUI() {
-  const p         = PHASES[phaseIdx];
+  const p = PHASES[phaseIdx];
   const remaining = p.dur - elapsed;
-  const phasePct  = elapsed / p.dur * 100;
-  const totalPct  = totalEl / TOTAL * 100;
-  const warn      = running && remaining <= 60 && remaining > 0;
+  const warn = running && remaining <= 60 && remaining > 0;
 
   const digits = document.getElementById('timerDigits');
   digits.textContent = fmt(remaining);
@@ -483,79 +383,56 @@ function updateUI() {
   document.getElementById('phaseLabel').style.color = p.color;
   document.getElementById('phaseSub').textContent   = p.sub;
 
-  document.getElementById('phaseBar').style.width  = phasePct + '%';
-  document.getElementById('phasePct').textContent  = Math.round(phasePct) + '%';
-
+  document.getElementById('phaseBar').style.width  = (elapsed / p.dur * 100) + '%';
+  document.getElementById('phasePct').textContent  = Math.round(elapsed / p.dur * 100) + '%';
   document.getElementById('totalLeft').textContent = fmt(TOTAL - totalEl) + ' left';
-  document.getElementById('playhead').style.left   = totalPct + '%';
+  document.getElementById('playhead').style.left   = (totalEl / TOTAL * 100) + '%';
 
-  PHASES.forEach((_, i) => {
-    const seg = document.getElementById(`seg${i}`);
-    const lbl = document.getElementById(`lbl${i}`);
+  PHASES.forEach((ph, i) => {
+    const seg  = document.getElementById(`seg${i}`);
+    const lbl  = document.getElementById(`lbl${i}`);
+    const pill = document.getElementById(`pill${i}`);
+
     if (i < phaseIdx) {
-      seg.style.background = PHASES[i].color + '55';
+      seg.style.background = ph.color + '44';
       lbl.className = 'seg-lbl';
     } else if (i === phaseIdx) {
-      seg.style.background = `linear-gradient(90deg, ${PHASES[i].color}66, ${PHASES[i].color}aa)`;
+      seg.style.background = `linear-gradient(90deg,${ph.color}55,${ph.color}99)`;
       lbl.className = 'seg-lbl active-lbl';
     } else {
       seg.style.background = 'transparent';
       lbl.className = 'seg-lbl';
     }
-  });
 
-  PHASES.forEach((_, i) => {
-    const pill = document.getElementById(`pill${i}`);
     pill.className = 'pill' +
-      (i < phaseIdx   ? ' done-pill'   :
-       i === phaseIdx  ? ' active-pill' : '');
-    pill.style.borderColor = i === phaseIdx ? PHASES[i].color : '';
-    pill.style.color       = i === phaseIdx ? PHASES[i].color :
-                             i < phaseIdx   ? '#3A6F88' : '';
+      (i < phaseIdx  ? ' done-pill'   :
+       i === phaseIdx ? ' active-pill' : '');
+    pill.style.borderColor = i === phaseIdx ? ph.color : '';
+    pill.style.color       = i === phaseIdx ? ph.color : i < phaseIdx ? '#3A6F88' : '';
   });
 }
 
 function tick() {
-  elapsed++;
-  totalEl++;
-  const p = PHASES[phaseIdx];
-  if (elapsed >= p.dur) {
+  elapsed++; totalEl++;
+  if (elapsed >= PHASES[phaseIdx].dur) {
     elapsed = 0;
     if (phaseIdx < PHASES.length - 1) {
       phaseIdx++;
     } else {
-      running = false;
-      clearInterval(interval); interval = null;
+      running = false; clearInterval(interval); interval = null;
       document.getElementById('timerDigits').textContent = '00:00';
       document.getElementById('timerDigits').className   = 'timer-digits';
       document.getElementById('phaseLabel').textContent  = '✓ Session Complete';
-      document.getElementById('phaseSub').textContent    = 'Great work, everyone!';
-      showControls('done');
-      updateUI();
-      return;
+      document.getElementById('phaseSub').textContent    = 'Great work everyone!';
+      showControls('done'); updateUI(); return;
     }
   }
   updateUI();
 }
 
-function startTimer() {
-  running  = true;
-  interval = setInterval(tick, 1000);
-  showControls('running');
-  updateUI();
-}
-
-function pauseTimer() {
-  running = false;
-  clearInterval(interval); interval = null;
-  showControls('paused');
-}
-
-function resumeTimer() {
-  running  = true;
-  interval = setInterval(tick, 1000);
-  showControls('running');
-}
+function startTimer()  { running=true; interval=setInterval(tick,1000); showControls('running'); updateUI(); }
+function pauseTimer()  { running=false; clearInterval(interval); interval=null; showControls('paused'); }
+function resumeTimer() { running=true; interval=setInterval(tick,1000); showControls('running'); }
 
 function nextPhase() {
   elapsed = 0;
@@ -564,38 +441,32 @@ function nextPhase() {
 }
 
 function jumpToPhase(i) {
-  phaseIdx = i;
-  elapsed  = 0;
+  phaseIdx = i; elapsed = 0;
   totalEl  = PHASES.slice(0, i).reduce((s, p) => s + p.dur, 0);
   if (!running) showControls('idle');
   updateUI();
 }
 
 function resetTimer() {
-  running = false;
-  clearInterval(interval); interval = null;
-  phaseIdx = 0; elapsed = 0; totalEl = 0;
+  running=false; clearInterval(interval); interval=null;
+  phaseIdx=0; elapsed=0; totalEl=0;
   showControls('idle');
   document.getElementById('timerDigits').textContent = fmt(PHASES[0].dur);
   document.getElementById('timerDigits').className   = 'timer-digits';
   document.getElementById('phaseLabel').textContent  = PHASES[0].label;
   document.getElementById('phaseSub').textContent    = PHASES[0].sub;
-  document.getElementById('phaseBar').style.width    = '0%';
-  document.getElementById('playhead').style.left     = '0%';
   updateUI();
 }
 
 function showControls(state) {
-  document.getElementById('btnStart') .style.display = state === 'idle'    ? '' : 'none';
-  document.getElementById('btnPause') .style.display = state === 'running'  ? '' : 'none';
-  document.getElementById('btnResume').style.display = state === 'paused'   ? '' : 'none';
-  document.getElementById('btnNext')  .style.display = (state === 'running' || state === 'paused') ? '' : 'none';
+  document.getElementById('btnStart') .style.display = state==='idle'    ? '' : 'none';
+  document.getElementById('btnPause') .style.display = state==='running' ? '' : 'none';
+  document.getElementById('btnResume').style.display = state==='paused'  ? '' : 'none';
+  document.getElementById('btnNext')  .style.display = (state==='running'||state==='paused') ? '' : 'none';
 }
 
-// init
-const totalMin = Math.round(TOTAL / 60);
-document.getElementById('sessionLabel').textContent = `Session Timeline — ${totalMin} Min`;
-document.getElementById('totalLeft').textContent = fmt(TOTAL) + ' left';
+document.getElementById('sessionLabel').textContent = `Session Timeline — ${Math.round(TOTAL/60)} Min`;
+document.getElementById('totalLeft').textContent    = fmt(TOTAL) + ' left';
 updateUI();
 </script>
 </body>
