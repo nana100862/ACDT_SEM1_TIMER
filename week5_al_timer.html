@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 5 — Action Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --border: #1e1e1e;
+  --text: #f0f0f0;
+  --muted: #444;
+  --muted2: #666;
+
+  /* Part colors */
+  --p1: #00c2ff;   /* Part 1 – cyan */
+  --p2: #00e5a0;   /* Part 2 – mint */
+  --p3: #e8ff00;   /* Part 3 – yellow */
+  --p4: #ff6b35;   /* Part 4 – orange */
+  --done: #2a2a2a;
+
+  /* Mode badge colors */
+  --individual: #a78bfa;
+  --pair: #34d399;
+  --group: #fb923c;
+  --instructor: #60a5fa;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* scanlines */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);
+  pointer-events:none;
+  z-index:9999;
+}
+
+/* ── HEADER ── */
+header {
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.h-left { display:flex; flex-direction:column; }
+.h-title {
+  font-family:'Oswald',sans-serif;
+  font-size: clamp(1.1rem,3vw,1.6rem);
+  font-weight:700;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color: var(--p2);
+}
+.h-sub { font-size:0.65rem; letter-spacing:0.25em; color:var(--muted2); text-transform:uppercase; margin-top:0.15rem; }
+
+.h-total {
+  font-size:0.72rem;
+  letter-spacing:0.2em;
+  color:var(--muted2);
+  text-align:right;
+}
+.h-total span { color:var(--text); }
+
+/* ── MAIN GRID ── */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  flex: 1;
+}
+
+/* ── LEFT: TIMER PANEL ── */
+.timer-panel {
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-right: 1px solid var(--border);
+}
+
+/* Part badge */
+.part-badge {
+  display:inline-flex;
+  align-items:center;
+  gap:0.6rem;
+}
+.part-dot {
+  width:10px; height:10px; border-radius:50%;
+  background: var(--current-color, var(--muted));
+  box-shadow: 0 0 10px var(--current-color, transparent);
+  flex-shrink:0;
+}
+.part-label {
+  font-size:0.65rem;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--muted2);
+}
+.part-name {
+  font-family:'Oswald',sans-serif;
+  font-size:clamp(0.85rem,2vw,1rem);
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color: var(--current-color, var(--muted2));
+}
+
+/* Step title */
+.step-title {
+  font-family:'Oswald',sans-serif;
+  font-size:clamp(1.4rem,4vw,2.2rem);
+  font-weight:700;
+  line-height:1.1;
+  letter-spacing:0.04em;
+  color:var(--text);
+}
+.step-hint {
+  font-size:0.72rem;
+  color:var(--muted2);
+  letter-spacing:0.1em;
+  margin-top:0.3rem;
+  line-height:1.5;
+}
+
+/* Mode chip */
+.mode-chip {
+  display:inline-flex;
+  align-items:center;
+  gap:0.4rem;
+  font-size:0.62rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  padding:0.25rem 0.65rem;
+  border:1px solid currentColor;
+  width:fit-content;
+  margin-top:0.4rem;
+}
+
+/* Giant timer */
+.timer-big {
+  font-size: clamp(5rem,20vw,11rem);
+  font-weight:400;
+  line-height:1;
+  letter-spacing:-0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--current-color, var(--text));
+  transition: color 0.4s;
+}
+.timer-big.warn { animation: warnPulse 1s infinite; }
+@keyframes warnPulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+/* Progress bar */
+.bar-wrap {
+  width:100%;
+  height:3px;
+  background:var(--border);
+  overflow:hidden;
+  margin-top:-0.5rem;
+}
+.bar-fill {
+  height:100%;
+  background: var(--current-color, var(--muted));
+  transition: background 0.4s, width 1s linear;
+}
+
+/* Session progress strip */
+.session-bar-wrap {
+  display:flex;
+  flex-direction:column;
+  gap:0.35rem;
+}
+.session-bar-label {
+  font-size:0.6rem;
+  letter-spacing:0.25em;
+  color:var(--muted2);
+  text-transform:uppercase;
+  display:flex;
+  justify-content:space-between;
+}
+.session-bar-track {
+  width:100%;
+  height:6px;
+  background:var(--border);
+  position:relative;
+  overflow:hidden;
+}
+.session-bar-fill {
+  height:100%;
+  background: linear-gradient(90deg, var(--p1), var(--p2), var(--p3), var(--p4));
+  background-size: 300% 100%;
+  background-position-x: 0%;
+  transition: width 1s linear;
+}
+
+/* Controls */
+.controls {
+  display:flex;
+  gap:0.75rem;
+  flex-wrap:wrap;
+  padding-top:1rem;
+  border-top:1px solid var(--border);
+}
+.btn {
+  font-family:'Oswald',sans-serif;
+  font-size:0.85rem;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  border:1px solid;
+  padding:0.6rem 1.5rem;
+  cursor:pointer;
+  background:transparent;
+  transition:all 0.15s;
+}
+.btn-play  { color:var(--p2); border-color:var(--p2); }
+.btn-play:hover { background:var(--p2); color:var(--bg); }
+.btn-pause { color:var(--text); border-color:var(--border); }
+.btn-pause:hover { background:var(--text); color:var(--bg); }
+.btn-skip  { color:var(--p3); border-color:var(--p3); }
+.btn-skip:hover  { background:var(--p3); color:var(--text); }
+.btn-reset { color:var(--muted2); border-color:var(--muted); }
+.btn-reset:hover { border-color:var(--text); color:var(--text); }
+.btn:disabled { opacity:0.2; pointer-events:none; }
+
+/* ── RIGHT: AGENDA PANEL ── */
+.agenda-panel {
+  padding: 1.5rem 1.2rem;
+  overflow-y: auto;
+  display:flex;
+  flex-direction:column;
+  gap:1.2rem;
+}
+
+.part-block { display:flex; flex-direction:column; gap:0.25rem; }
+
+.part-header {
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  padding-bottom:0.4rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:0.15rem;
+}
+.part-color-bar {
+  width:3px;
+  height:1rem;
+  border-radius:1px;
+  flex-shrink:0;
+}
+.part-header-label {
+  font-family:'Oswald',sans-serif;
+  font-size:0.75rem;
+  font-weight:600;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+}
+.part-header-min {
+  margin-left:auto;
+  font-size:0.6rem;
+  letter-spacing:0.1em;
+  color:var(--muted2);
+}
+
+.step-row {
+  display:flex;
+  align-items:flex-start;
+  gap:0.6rem;
+  padding:0.45rem 0.5rem;
+  border:1px solid transparent;
+  border-radius:1px;
+  transition:all 0.3s;
+  cursor:default;
+}
+.step-row.active { border-color: var(--current-color,var(--muted)); background:rgba(255,255,255,0.03); }
+.step-row.done   { opacity:0.28; }
+
+.step-row-num {
+  font-size:0.6rem;
+  color:var(--muted2);
+  width:14px;
+  flex-shrink:0;
+  padding-top:0.1rem;
+}
+.step-row-info { flex:1; min-width:0; }
+.step-row-name {
+  font-size:0.75rem;
+  line-height:1.3;
+  color:var(--text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.step-row.active .step-row-name { color: var(--current-color, var(--text)); }
+.step-row-dur {
+  font-size:0.6rem;
+  color:var(--muted2);
+  margin-top:0.1rem;
+}
+.step-row-mode {
+  font-size:0.55rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted2);
+  padding-top:0.15rem;
+}
+.step-arrow { font-size:0.65rem; color:var(--current-color,transparent); flex-shrink:0; padding-top:0.1rem; }
+
+/* Done overlay */
+#done-overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(10,10,10,0.95);
+  z-index:500;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:1.2rem;
+}
+.done-title {
+  font-family:'Oswald',sans-serif;
+  font-size:clamp(2.5rem,8vw,5rem);
+  font-weight:700;
+  color:var(--p2);
+  letter-spacing:0.08em;
+  text-align:center;
+}
+.done-sub { font-size:0.8rem; letter-spacing:0.2em; color:var(--muted2); text-transform:uppercase; text-align:center; }
+
+/* flash overlay */
+.flash-overlay {
+  position:fixed; inset:0;
+  opacity:0; pointer-events:none;
+  z-index:400;
+  transition:opacity 0.15s;
+}
+.flash-overlay.on { opacity:0.12; }
+
+@media(max-width:640px){
+  .layout{grid-template-columns:1fr;}
+  .agenda-panel{border-top:1px solid var(--border);}
+}
+</style>
+</head>
+<body>
+
+<div class="flash-overlay" id="flashEl"></div>
+<div id="done-overlay">
+  <div class="done-title">Session Complete</div>
+  <div class="done-sub">Pseudocode → Python &nbsp;·&nbsp; 90 minutes</div>
+  <button class="btn btn-reset" style="margin-top:1rem;" onclick="resetSession()">↺ &nbsp;Restart</button>
+</div>
+
+<header>
+  <div class="h-left">
+    <div class="h-title">Week 5 — Action Learning</div>
+    <div class="h-sub">Pseudocode → Python &nbsp;·&nbsp; ACDT</div>
+  </div>
+  <div class="h-total">Total Session &nbsp;<span>90 MIN</span><br>
+    <span id="sessionClock" style="font-size:0.85rem;color:var(--muted2)">00:00</span> elapsed
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="timer-panel">
+
+    <div>
+      <div class="part-badge" id="partBadge">
+        <div class="part-dot" id="partDot"></div>
+        <div>
+          <div class="part-label" id="partLabel">Part —</div>
+          <div class="part-name" id="partName">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="step-title" id="stepTitle">—</div>
+      <div class="mode-chip" id="modeChip">—</div>
+      <div class="step-hint" id="stepHint"></div>
+    </div>
+
+    <div class="timer-big" id="timerBig">—:——</div>
+    <div class="bar-wrap"><div class="bar-fill" id="barFill" style="width:100%"></div></div>
+
+    <div class="session-bar-wrap">
+      <div class="session-bar-label">
+        <span>Session Progress</span>
+        <span id="sessionPct">0%</span>
+      </div>
+      <div class="session-bar-track">
+        <div class="session-bar-fill" id="sessionBarFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-play"  id="btnPlay"  onclick="togglePlay()">▶ Start</button>
+      <button class="btn btn-pause" id="btnPause" onclick="togglePlay()" style="display:none">⏸ Pause</button>
+      <button class="btn btn-skip"  id="btnSkip"  onclick="skipStep()">Skip →</button>
+      <button class="btn btn-reset" onclick="resetSession()">↺ Reset</button>
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="agenda-panel" id="agendaPanel"></div>
+
+</div>
+
+<script>
+// ─── SESSION DATA ───────────────────────────────────────────────
+const PARTS = [
+  {
+    id: 1, label: 'Part 1-1', name: 'Setup & Pseudocode Review',
+    color: '#00c2ff', totalMin: 10,
+    steps: [
+      { name: 'Environment Check & Pseudocode Selection', min: 10, mode: 'Individual', hint: 'Open Google Colab · Verify Python is running · Resolve any setup issues · Open Week 4 Problem Set · Select 2–3 simple functions · No loops yet — focus on sequential logic' },
+    ]
+  },
+  {
+    id: 2, label: 'Part 1-2', name: 'Pseudocode Review',
+    color: '#00e5a0', totalMin: 10,
+    steps: [
+      { name: 'Pair Sharing & Discussion', min: 10, mode: 'Pair', hint: 'Turn to your neighbor · Share selected functions · Confirm clear INPUT / OUTPUT · Peer critique · "Is this input clear?" · "What will be the return value?"' },
+    ]
+  },
+  {
+    id: 3, label: 'Part 2', name: 'Collaborative Translation',
+    color: '#e8ff00', totalMin: 50,
+    steps: [
+      { name: 'Instructor Demo',        min: 10, mode: 'Instructor', hint: 'Guided demo: CalculateDosage · Watch pseudocode → Python translation step-by-step' },
+      { name: 'Individual Translation', min: 25, mode: 'Individual', hint: 'Paste pseudocode as comments · Convert line-by-line · Add docstring · Test with sample inputs · Debug collaboratively' },
+      { name: 'Peer Code Review',       min: 15, mode: 'Pair',       hint: 'Swap code with partner · Check: names, docstring, comments, indentation, correct output · Give constructive feedback' },
+    ]
+  },
+  {
+    id: 4, label: 'Part 3', name: 'Showcase & Debrief',
+    color: '#ff6b35', totalMin: 20,
+    steps: [
+      { name: 'Volunteer Showcase', min: 10, mode: 'Group',      hint: '2–3 students present · Show pseudocode → Show Python · Discuss one challenge & solution · Peer feedback' },
+      { name: 'Instructor Debrief', min: 10, mode: 'Instructor', hint: 'Best practices highlight · Common pitfalls review · Key takeaway: logic translation > syntax perfection' },
+    ]
+  }
+];
+
+// Flatten steps with metadata
+const STEPS = [];
+PARTS.forEach(part => {
+  part.steps.forEach((s, si) => {
+    STEPS.push({
+      partId:    part.id,
+      partLabel: part.label,
+      partName:  part.name,
+      color:     part.color,
+      name:      s.name,
+      mode:      s.mode,
+      hint:      s.hint,
+      secs:      s.min * 60,
+      minLabel:  s.min + ' min',
+    });
+  });
+});
+
+const SESSION_TOTAL = 90 * 60;
+
+// ─── STATE ──────────────────────────────────────────────────────
+let currentStep = 0;
+let timeLeft    = 0;
+let running     = false;
+let ticker      = null;
+let sessionElapsed = 0;
+let sessionTicker  = null;
+
+// ─── INIT ────────────────────────────────────────────────────────
+buildAgenda();
+loadStep(0);
+
+function buildAgenda() {
+  const panel = document.getElementById('agendaPanel');
+  panel.innerHTML = '';
+
+  PARTS.forEach(part => {
+    const block = document.createElement('div');
+    block.className = 'part-block';
+    block.id = 'part-block-' + part.id;
+
+    const header = document.createElement('div');
+    header.className = 'part-header';
+    header.innerHTML = `
+      <div class="part-color-bar" style="background:${part.color}"></div>
+      <div class="part-header-label" style="color:${part.color}">${part.label}</div>
+      <div class="part-header-label" style="color:var(--muted2);font-weight:300;font-size:0.65rem;">${part.name}</div>
+      <div class="part-header-min">${part.totalMin} min</div>
+    `;
+    block.appendChild(header);
+
+    STEPS.forEach((s, idx) => {
+      if (s.partId !== part.id) return;
+      const row = document.createElement('div');
+      row.className = 'step-row pending';
+      row.id = 'step-row-' + idx;
+      row.innerHTML = `
+        <div class="step-arrow" id="step-arrow-${idx}">▶</div>
+        <div class="step-row-info">
+          <div class="step-row-name">${s.name}</div>
+          <div class="step-row-dur">${s.minLabel} &nbsp;·&nbsp; <span style="color:${modeColor(s.mode)}">${s.mode}</span></div>
+        </div>
+      `;
+      block.appendChild(row);
+    });
+
+    panel.appendChild(block);
+  });
+}
+
+function modeColor(mode) {
+  return { Individual:'var(--individual)', Pair:'var(--pair)', Group:'var(--group)', Instructor:'var(--instructor)' }[mode] || 'var(--muted2)';
+}
+
+function loadStep(idx) {
+  currentStep = idx;
+  const s = STEPS[idx];
+  timeLeft   = s.secs;
+
+  // Set CSS color var
+  document.documentElement.style.setProperty('--current-color', s.color);
+
+  // Part badge
+  document.getElementById('partLabel').textContent = s.partLabel;
+  document.getElementById('partName').textContent  = s.partName;
+  document.getElementById('partDot').style.background    = s.color;
+  document.getElementById('partDot').style.boxShadow     = `0 0 10px ${s.color}`;
+
+  // Step info
+  document.getElementById('stepTitle').textContent = s.name;
+  document.getElementById('stepHint').textContent  = s.hint;
+
+  const chip = document.getElementById('modeChip');
+  chip.textContent = s.mode;
+  chip.style.color        = modeColor(s.mode);
+  chip.style.borderColor  = modeColor(s.mode);
+
+  // Timer
+  document.getElementById('timerBig').style.color = s.color;
+  document.getElementById('barFill').style.background = s.color;
+
+  // Buttons
+  document.getElementById('btnPlay').style.display  = 'inline-block';
+  document.getElementById('btnPlay').textContent    = '▶ Start';
+  document.getElementById('btnPause').style.display = 'none';
+  document.getElementById('btnSkip').disabled       = false;
+
+  renderTimer();
+  updateAgendaHighlight();
+}
+
+function renderTimer() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('timerBig');
+  el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+
+  const pct = (timeLeft / STEPS[currentStep].secs) * 100;
+  document.getElementById('barFill').style.width = pct + '%';
+
+  el.classList.toggle('warn', timeLeft <= 30 && timeLeft > 0 && running);
+}
+
+function updateAgendaHighlight() {
+  STEPS.forEach((_, idx) => {
+    const row   = document.getElementById('step-row-' + idx);
+    const arrow = document.getElementById('step-arrow-' + idx);
+    if (!row) return;
+    row.classList.remove('active','done','pending');
+    if (idx === currentStep) {
+      row.classList.add('active');
+      row.style.borderColor = STEPS[idx].color;
+      arrow.style.color = STEPS[idx].color;
+      row.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    } else if (idx < currentStep) {
+      row.classList.add('done');
+      row.style.borderColor = 'transparent';
+      arrow.style.color = 'transparent';
+    } else {
+      row.classList.add('pending');
+      row.style.borderColor = 'transparent';
+      arrow.style.color = 'transparent';
+    }
+  });
+}
+
+function updateSessionBar() {
+  const pct = Math.min(100, Math.round(sessionElapsed / SESSION_TOTAL * 100));
+  document.getElementById('sessionBarFill').style.width = pct + '%';
+  document.getElementById('sessionPct').textContent = pct + '%';
+  const e = sessionElapsed;
+  const mm = Math.floor(e/60).toString().padStart(2,'0');
+  const ss = (e%60).toString().padStart(2,'0');
+  document.getElementById('sessionClock').textContent = mm + ':' + ss;
+}
+
+// ─── CONTROLS ────────────────────────────────────────────────────
+function togglePlay() {
+  if (!running) {
+    running = true;
+    document.getElementById('btnPlay').style.display  = 'none';
+    document.getElementById('btnPause').style.display = 'inline-block';
+
+    ticker = setInterval(() => {
+      timeLeft--;
+      sessionElapsed++;
+      renderTimer();
+      updateSessionBar();
+      if (timeLeft <= 0) {
+        clearInterval(ticker);
+        ticker = null;
+        onStepEnd();
+      }
+    }, 1000);
+
+    if (!sessionTicker) {
+      sessionTicker = true; // handled in main ticker
+    }
+  } else {
+    running = false;
+    clearInterval(ticker);
+    ticker = null;
+    document.getElementById('btnPlay').style.display  = 'inline-block';
+    document.getElementById('btnPlay').textContent    = '▶ Resume';
+    document.getElementById('btnPause').style.display = 'none';
+    document.getElementById('timerBig').classList.remove('warn');
+  }
+}
+
+function onStepEnd() {
+  running = false;
+  flash(STEPS[currentStep].color);
+  document.getElementById('timerBig').classList.remove('warn');
+
+  setTimeout(() => {
+    const next = currentStep + 1;
+    if (next >= STEPS.length) {
+      endSession();
+    } else {
+      loadStep(next);
+    }
+  }, 500);
+}
+
+function skipStep() {
+  clearInterval(ticker);
+  ticker = null;
+  running = false;
+  document.getElementById('timerBig').classList.remove('warn');
+  flash(STEPS[currentStep].color);
+  setTimeout(() => {
+    const next = currentStep + 1;
+    if (next >= STEPS.length) {
+      endSession();
+    } else {
+      loadStep(next);
+    }
+  }, 300);
+}
+
+function endSession() {
+  document.getElementById('done-overlay').style.display = 'flex';
+}
+
+function resetSession() {
+  clearInterval(ticker);
+  ticker = null;
+  running = false;
+  currentStep    = 0;
+  sessionElapsed = 0;
+  document.getElementById('done-overlay').style.display = 'none';
+  document.getElementById('timerBig').classList.remove('warn');
+  updateSessionBar();
+  loadStep(0);
+}
+
+function flash(color) {
+  const el = document.getElementById('flashEl');
+  el.style.background = color;
+  el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 300);
+}
+</script>
+</body>
+</html>
