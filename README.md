@@ -39,6 +39,16 @@ Action Learning — Pseudocode → Python Workshop
   
 **→ [Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/week5_al_timer.html)**
 
+## Week 6_Timers
+
+**Action Learning — Conditional Logic Practice**  
+Step-by-step countdown timer for the AL Conditional Logic group activity.
+* 4 phases with preset durations (70 min total)
+* Live progress bar and session timeline
+* Pause, resume, skip phase controls
+
+→ **[Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/acdt_week6_al_timer.html)**
+
 ##  How to Use
 Just open the links above — no installation needed.
 Works in any browser on any device.
