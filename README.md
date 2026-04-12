@@ -49,6 +49,16 @@ Step-by-step countdown timer for the AL Conditional Logic group activity.
 
 → **[Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/acdt_week6_al_timer.html)**
 
+## Week 7_Timers
+
+**Action Learning — Iteration Practice**  
+Step-by-step countdown timer for the AL Iteration Practice group activity.
+* 4 phases with preset durations (60 min total)
+* Live progress bar and session timeline
+* Pause, resume, skip phase controls
+
+→ **[Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/acdt_week7_al_timer.html)**
+
 ##  How to Use
 Just open the links above — no installation needed.
 Works in any browser on any device.
