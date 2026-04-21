@@ -59,6 +59,24 @@ Step-by-step countdown timer for the AL Iteration Practice group activity.
 
 → **[Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/acdt_week7_al_timer.html)**
 
+# Week 8_Timer 1
+Self Practice: Functions, Scope & Lists
+ 
+* Step-by-step countdown timer for individual self-practice activities.
+* 3 phases with preset durations (9 min total)
+* Live progress bar and session timeline
+* Pause, resume, skip phase controls
+→ **[Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/week8-timer.html)**
+ 
+# Week 8_Timer 2
+Action Learning  — Work · Mid-Check · Work · Exit Ticket
+ 
+* Step-by-step countdown timer for the full group project session.
+* 4 phases with preset durations (120 min total)
+* Live progress bar and session timeline
+* Pause, resume, skip phase controls
+→ **[Open AL Timer](https://nana100862.github.io/ACDT_SEM1_TIMER/week8-timer2.html)**
+
 ##  How to Use
 Just open the links above — no installation needed.
 Works in any browser on any device.
