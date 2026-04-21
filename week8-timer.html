@@ -249,12 +249,12 @@
   <div class="header">
     <div class="eyebrow">ACDT · Week 8 · Self Practice</div>
     <div class="title-main">Functions, Scope <span class="title-accent">&amp; Lists</span></div>
-    <div class="subtitle">Variable Scope · Real-World Functions · Testing · List Comprehensions</div>
+    <div class="subtitle">Variable Scope · Testing · List Comprehensions · Frequency Counting</div>
   </div>
 
   <div class="timer-wrap">
     <div class="timer-digits" id="timerDigits">02:00</div>
-    <div class="phase-label"  id="phaseLabel">Practice 1 · Individual</div>
+    <div class="phase-label"  id="phaseLabel">Practice 1: Variable Scope</div>
     <div class="phase-sub"    id="phaseSub">Open Colab · Create notebook "Week5_Scope_Practice" · Run the variable scope example · Challenge: modify function to use a parameter instead of global</div>
   </div>
 
@@ -294,20 +294,24 @@
 <script>
 const PHASES = [
   {
-    label: 'Practice 1 · Individual',
+    label: 'Practice 1: Variable Scope',
     sub:   'Open Colab · Create notebook "Week5_Scope_Practice" · Run the variable scope example · Challenge: modify the function to take count as an argument instead of using global',
     dur:   2 * 60, color: '#00C6FF'
   },
-
   {
-    label: 'Practice 3 · Individual',
+    label: 'Practice 2: Implementation & Testing',
     sub:   'Copy calculate_dosage & validate_score into Colab · Paste and run the test block · Challenge: modify calculate_dosage to cap dosage at 1000mg — test with a 120kg patient',
-    dur:   5 * 60, color: '#E8FF00'
+    dur:   5 * 60, color: '#00E5A0'
   },
   {
-    label: 'Practice 4 · Individual',
+    label: 'Practice 3: List Comprehensions',
     sub:   'Run the list comprehension examples: doubled & evens · Understand mapping vs filtering · Challenge: write a comprehension that squares only odd numbers',
-    dur:   2 * 60, color: '#FB923C'
+    dur:   2 * 60, color: '#E8FF00'
+  },
+  {
+    label: 'Practice 4: Frequency Counting',
+    sub:   'Run the frequency_counter.py example · Understand how .get(key, default) handles missing keys · Challenge: modify the counter to ignore case — "A" and "a" should be counted together',
+    dur:   5 * 60, color: '#FB923C'
   },
 ];
 const TOTAL = PHASES.reduce((s, p) => s + p.dur, 0);
